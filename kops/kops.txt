@@ -1,0 +1,30 @@
+// Kops configuration
+
+
+// Cluster state 
+aws s3api create-bucket \
+    --bucket prefix-mannyrodriguez-link-state-store \
+    --region us-east-1
+
+
+// Put versioning on bucket 
+aws s3api put-bucket-versioning --bucket prefix-mannyrodriguez-link-state-store --versioning-configuration Status=Enabled
+
+
+// prepare local environment
+export NAME=mannyrodriguez.link
+export KOPS_STATE_STORE=s3://prefix-mannyrodriguez-link-state-store
+
+
+// Cluster creation 
+
+kops create cluster \
+--cloud=aws \
+--master-zones=us-east-1a \
+--zones=us-east-1b \
+--node-count=1 \
+--topology private \
+--networking amazonvpc \
+--node-size=t3.micro \
+--master-size=t3.micro \
+${NAME}
